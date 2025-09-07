@@ -1,0 +1,30 @@
+# API Keys and Configuration
+config.js
+.env
+.env.local
+.env.production
+
+# Node modules (if you add backend later)
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build files (if you add build process)
+dist/
+build/

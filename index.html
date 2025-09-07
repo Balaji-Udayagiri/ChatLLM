@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Interface</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Markdown and Math Rendering Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Load configuration before main script -->
+    <script src="config.js"></script>
+</head>
+<body>
+    <!-- Configuration Panel -->
+    <div class="config-panel" id="configPanel">
+        <h3>Configuration</h3>
+        <input type="password" id="apiKeyInput" class="config-input" placeholder="Enter OpenAI API Key" />
+        <input type="text" id="modelInput" class="config-input" placeholder="Enter model name (e.g., gpt-3.5-turbo, gpt-4)" />
+        <button class="config-button" onclick="chatApp.saveConfig()">Save Config</button>
+        <button class="config-button" onclick="chatApp.toggleConfig()">Hide</button>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar for conversations -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Conversations</h2>
+                <button class="new-chat-btn" onclick="chatApp.createNewChat()">
+                    <span class="plus-icon">+</span>
+                    New Chat
+                </button>
+            </div>
+            
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be dynamically added here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="chatApp.toggleConfig()">
+                    ⚙️ Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Main chat area -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <button class="sidebar-toggle" onclick="chatApp.toggleSidebar()" title="Toggle sidebar">☰</button>
+                <div class="chat-info">
+                    <h1 id="chatTitle">AI Chat Assistant</h1>
+                    <div class="chat-meta">
+                        <div class="status" id="status">Ready to chat</div>
+                        <div class="current-model" id="currentModel">Model: Loading...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="message-content">
+                        Hello! I'm your AI assistant. How can I help you today?
+                        <div class="message-time" id="welcomeTime"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-content">
+                    AI is thinking...
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="attachments-preview" id="attachmentsPreview"></div>
+            
+            <div class="chat-input-container">
+                <button class="attachment-button" onclick="chatApp.toggleAttachmentMenu()" title="Attach files">
+                    📎
+                </button>
+                <textarea 
+                    id="chatInput" 
+                    class="chat-input" 
+                    placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+                    rows="1"
+                ></textarea>
+                <button id="sendButton" class="send-button" onclick="chatApp.sendMessage()">Send</button>
+            </div>
+            
+            <!-- Hidden file input -->
+            <input type="file" id="fileInput" multiple accept="image/*,.pdf,.txt,.doc,.docx,.json,.csv" style="display: none" />
+            
+            <!-- Attachment menu -->
+            <div class="attachment-menu" id="attachmentMenu">
+                <div class="attachment-option" onclick="chatApp.selectFiles('image')">
+                    🖼️ Images
+                    <span class="attachment-desc">For vision analysis</span>
+                </div>
+                <div class="attachment-option" onclick="chatApp.selectFiles('document')">
+                    📄 Documents
+                    <span class="attachment-desc">PDF, TXT, DOC, etc.</span>
+                </div>
+                <div class="attachment-option" onclick="chatApp.selectFiles('any')">
+                    📁 Any File
+                    <span class="attachment-desc">All file types</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
