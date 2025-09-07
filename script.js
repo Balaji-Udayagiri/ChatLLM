@@ -845,22 +845,46 @@ class ChatApp {
             
             apiMessages.push(currentMessage);
             
+            // Model-specific parameter handling
+            const requestBody = {
+                model: this.model,
+                messages: apiMessages
+            };
+
+            // Add model-specific parameters
+            if (this.model.startsWith('o1') || this.model.startsWith('o3')) {
+                // o1 and o3 models don't support temperature or max_tokens
+                requestBody.max_completion_tokens = 1000;
+            } else {
+                // Standard models
+                requestBody.max_tokens = 1000;
+                requestBody.temperature = 0.7;
+            }
+
+            console.log(`Making API request with model: ${this.model}`);
+            console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.apiKey}`
                 },
-                body: JSON.stringify({
-                    model: this.model,
-                    messages: apiMessages,
-                    max_tokens: 1000,
-                    temperature: 0.7
-                })
+                body: JSON.stringify(requestBody)
             });
 
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    console.error('API Error Response:', errorData);
+                    if (errorData.error) {
+                        errorMessage += ` - ${errorData.error.message}`;
+                    }
+                } catch (e) {
+                    console.error('Could not parse error response');
+                }
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
